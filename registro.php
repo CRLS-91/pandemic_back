@@ -22,6 +22,6 @@ if($conexion->connect_error){
    $insertarUsuario = "INSERT INTO usuarios (nombre, password) VALUES ('$nombre', '$hash')";
    $conexion->query($insertarUsuario);
    
-   echo "status':'success","message':'Se logueó correctamente a: .$nombre"
+   echo "status : success, message : Se logueó correctamente a: $nombre"
    
    ?>
