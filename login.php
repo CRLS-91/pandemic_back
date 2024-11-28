@@ -28,16 +28,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $contraseña = $conn->real_escape_string($contraseña);
 
     // Consultar la base de datos para verificar el usuario
-    $sql = "SELECT * FROM jugador WHERE nombre = '$nombre' AND contraseña = '$hash'";
+    $sql = "SELECT * FROM jugador WHERE nombre = '$nombre'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        // Usuario encontrado, iniciar sesión
-        $_SESSION['nombre'] = $nombre;
-        echo "Inicio de sesión exitoso. Bienvenido, " . $nombre . "!";
+        $row = $result->fetch_assoc();
+        if (password_verify($contraseña, $row['contraseña'])) {
+            // Usuario encontrado y contraseña verificada, iniciar sesión
+            $_SESSION['nombre'] = $nombre;
+            echo json_encode(["status" => "success", "message" => "Se logueó correctamente a: $nombre"]);
+        } else {
+            // Contraseña incorrecta
+            echo json_encode(["status" => "error", "message" => "Password incorrecta para el usuario: $nombre"]);
+        }
     } else {
-        // Usuario no encontrado o contraseña incorrecta
-        echo "Nombre de usuario o contraseña incorrectos.";
+        // Usuario no encontrado
+        echo json_encode(["status" => "error", "message" => "Usuario no encontrado: $nombre"]);
     }
 }
 
